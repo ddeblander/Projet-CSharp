@@ -1,0 +1,188 @@
+﻿<Window x:Class="Projet_C.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Projet_C"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_admin" SelectionChanged="Selector_OnSelected">
+            <ListViewItem>
+                <Label>AD Admin</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD User Add</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD User Delete</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD User Modify</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD video game</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD video game add</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD video game delete</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD video game modify</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>AD loan</Label>
+            </ListViewItem>
+        </ListView>
+
+        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_player" SelectionChanged="Selector_OnSelected2">
+            <ListViewItem>
+                <Label>PL video game</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>PL video game delete</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>PL loan</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>PL account</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>PL modify account</Label>
+            </ListViewItem>
+        </ListView>
+
+        <!--gestion admin user-->
+        
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user" Visibility="Collapsed">
+            <DataGrid x:Name="dg_ad_user" AutoGenerateColumns="True" ></DataGrid>
+        </Grid>
+
+        <!--gestion admin user add-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_add" Visibility="Collapsed">
+            <Button x:Name="ad_add_user"
+                    Click="Ad_add_user_OnClick">
+                Add user
+            </Button>
+        </Grid>
+        <!--gestion admin user delete-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_delete" Visibility="Collapsed">
+            <Button x:Name="ad_delete_user"
+                    Click="Ad_delete_user_OnClick">
+                Delete user
+            </Button>
+        </Grid>
+        <!--gestion admin user modify-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_modify" Visibility="Collapsed">
+            <Button x:Name="ad_modify_user"
+                    Click="Ad_modify_user_OnClick">
+                Modify user
+            </Button>
+        </Grid>
+        <!--gestion admin video game-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game" Visibility="Collapsed">
+            <DataGrid x:Name="dg_ad_video_game" AutoGenerateColumns="True" ></DataGrid>
+        </Grid>
+
+        <!--gestion admin video game add-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game_add" Visibility="Collapsed">
+            <Button x:Name="ad_add_video_game"
+                    Click="Ad_add_video_game_OnClick">
+                Add video game
+            </Button>
+        </Grid>
+        <!--gestion admin video game delete-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game_delete" Visibility="Collapsed">
+            <Button x:Name="ad_delete_video_game"
+                    Click="Ad_delete_video_game_OnClick">
+                delete video game
+            </Button>
+        </Grid>
+
+        <!--gestion admin video game modify-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game_modify" Visibility="Collapsed">
+            <Button x:Name="ad_modify_video_game"
+                    Click="Ad_modify_video_game_OnClick">
+                modify video game
+            </Button>
+        </Grid>
+
+        <!--gestion admin loan-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_loan" Visibility="Collapsed">
+            <DataGrid x:Name="dg_ad_user_loan" AutoGenerateColumns="True" ></DataGrid>
+        </Grid>
+        
+        <!--gestion player video game-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_video_game" Visibility="Collapsed">
+            <DataGrid x:Name="dg_pl_video_game" AutoGenerateColumns="True" ></DataGrid>
+        </Grid>
+        
+        <!--gestion player video game add-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_video_game_add" Visibility="Collapsed">
+            <Button x:Name="pl_add_video_game"
+                    Click="Ad_add_video_game_OnClick">
+                add video game
+            </Button>
+        </Grid>
+
+        <!--gestion player loan-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_user_loan" Visibility="Collapsed">
+            <DataGrid x:Name="dg_pl_user_loan" AutoGenerateColumns="True" ></DataGrid>
+        </Grid>
+
+        <!--gestion player user account-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_user_account" Visibility="Collapsed">
+            <Button x:Name="pl_user_account"
+                    Click="Pl_user_account_OnClick">
+                Account
+            </Button>
+        </Grid>
+
+        <!--gestion player modify account-->
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_modify_account" Visibility="Collapsed">
+            <Button x:Name="pl_modify_account"
+                    Click="Pl_modify_account_OnClick">
+                Modify Account
+            </Button>
+        </Grid>
+
+        <!--Page de Connection-->
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="MediumAquamarine" x:Name="Login_ui" d:Visibility="Hidden">
+            <Border CornerRadius="15" Padding="25" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="100">
+                    <Label FontWeight="DemiBold" HorizontalContentAlignment="Left" Opacity="0.9">UserName</Label>
+                    <DockPanel>
+                        <Image VerticalAlignment="Bottom" Source="Resources/Images/username.png" MaxWidth="15" MaxHeight="15" Opacity="0.8" Margin="0,0,10,0"/>
+                        <TextBox FontSize="22" x:Name="login_user" BorderThickness="0,0,0,2" BorderBrush="DarkGray"></TextBox>
+                    </DockPanel>
+                    <Label FontWeight="Bold" Opacity="0.9" HorizontalContentAlignment="Left">Password</Label>
+                    <DockPanel Margin="0,0,0,10">
+                        <Image VerticalAlignment="Bottom" Source="Resources/Images/password.png" MaxWidth="15" MaxHeight="15" Opacity="0.8" Margin="0,0,10,0"/>
+                        <PasswordBox FontSize="22" x:Name="login_pwd"  BorderThickness="0,0,0,2" BorderBrush="DarkGray" ></PasswordBox>
+                    </DockPanel>
+                    <Label FontWeight="DemiBold" Foreground="DarkRed" Visibility="Collapsed" Margin="0,0,0,5" x:Name="login_error_text">Wrong user/password</Label>
+                    <Button Click="ButtonLogin_OnClick" Background="Transparent" BorderBrush="Transparent">
+                        <Border CornerRadius="5" Background="MediumAquamarine" Padding="5,0">
+                            <Label>Connection</Label>
+                        </Border>
+                        
+                    </Button>
+                    <Button Click="ButtonReg_OnClick" Background="Transparent" BorderBrush="Transparent">
+                        <Border CornerRadius="5" Background="DodgerBlue" Padding="5,0">
+                            <Label>Inscription</Label>
+                        </Border>
+
+                    </Button>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Grid>
+</Window>
