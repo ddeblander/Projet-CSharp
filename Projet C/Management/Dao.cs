@@ -24,6 +24,7 @@ namespace Projet_C.Management
             try
             {
                 connection = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDB"].ConnectionString);
+
                 cmd.Connection = connection;
             }catch(Exception ex) { Trace.WriteLine(ex.ToString); }
             

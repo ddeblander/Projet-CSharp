@@ -14,14 +14,15 @@ namespace Projet_C.Management
     {
         public List<Admin> ReadAll()
         {
-            connection.Open();
+            
             List<Admin> list = new List<Admin>();
 
             Admin ad;
             try
             {
+                connection.Open();
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Admins";
+                cmd.CommandText = "select * from dbo.admins";
 
 
                 reader = cmd.ExecuteReader();
@@ -47,7 +48,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Admins where ID=@ID";
+                cmd.CommandText = "select * from dbo.admins where ID=@ID";
                 cmd.Parameters.AddWithValue("ID", ID);
                 reader = cmd.ExecuteReader();
 
@@ -69,7 +70,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Admins where username=@USER and password=@PWD";
+                cmd.CommandText = "select * from dbo.admins where username=@USER and password=@PWD";
                 cmd.Parameters.AddWithValue("USER", user);
                 cmd.Parameters.AddWithValue("PWD", pwd);
                 reader = cmd.ExecuteReader();
@@ -93,7 +94,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Admins where username=@USER";
+                cmd.CommandText = "select * from dbo.admins where username=@USER";
                 cmd.Parameters.AddWithValue("USER", user);
                 reader = cmd.ExecuteReader();
 
@@ -121,7 +122,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "insert into dbo.Admins(username,password) values(@USER,@PWD)";
+                cmd.CommandText = "insert into dbo.admins(username,password) values(@USER,@PWD)";
                 cmd.Parameters.AddWithValue("USER", ad.Username);
                 cmd.Parameters.AddWithValue("PWD", ad.Password);
                 cmd.ExecuteNonQuery();
@@ -141,7 +142,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "delete dbo.Admins where ID=@ID";
+                cmd.CommandText = "delete dbo.admins where ID=@ID";
                 cmd.Parameters.AddWithValue("ID", ad.Id_User);
                 cmd.ExecuteNonQuery();
 
@@ -159,7 +160,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "update dbo.Admins set username=@USER,password=@PWD where id=@ID";
+                cmd.CommandText = "update dbo.admins set username=@USER,password=@PWD where id=@ID";
                 cmd.Parameters.AddWithValue("USER", ad.Username);
                 cmd.Parameters.AddWithValue("PWD", ad.Password);
                 cmd.Parameters.AddWithValue("ID", ad.Id_User);

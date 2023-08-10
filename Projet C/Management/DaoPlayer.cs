@@ -22,7 +22,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Players";
+                cmd.CommandText = "select * from dbo.players";
 
 
                 reader = cmd.ExecuteReader();
@@ -51,7 +51,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Players where ID=@ID";
+                cmd.CommandText = "select * from dbo.players where ID=@ID";
                 cmd.Parameters.AddWithValue("ID", ID);
                 reader = cmd.ExecuteReader();
 
@@ -76,7 +76,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Players where username=@USER and password=@PWD";
+                cmd.CommandText = "select * from dbo.players where username=@USER and password=@PWD";
                 cmd.Parameters.AddWithValue("USER", user);
                 cmd.Parameters.AddWithValue("PWD", pwd);
                 reader = cmd.ExecuteReader();
@@ -101,7 +101,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Players where username=@USER";
+                cmd.CommandText = "select * from dbo.players where username=@USER";
                 cmd.Parameters.AddWithValue("USER", user);
                 reader = cmd.ExecuteReader();
 
@@ -130,7 +130,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "insert into dbo.Players(username,password,pseudo,registrationdate,dateofbirth,Credit) values(@USER,@PWD,@PSEU,@RD,@DOB,@CRD)";
+                cmd.CommandText = "insert into dbo.players(username,password,pseudo,registrationdate,dateofbirth,Credit) values(@USER,@PWD,@PSEU,@RD,@DOB,@CRD)";
                 cmd.Parameters.AddWithValue("USER", pl.Username);
                 cmd.Parameters.AddWithValue("PWD", pl.Password);
                 cmd.Parameters.AddWithValue("PSEU", pl.Pseudo);
@@ -154,7 +154,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "delete dbo.Players where ID=@ID";
+                cmd.CommandText = "delete dbo.players where ID=@ID";
                 cmd.Parameters.AddWithValue("ID", pl.Id_User);
                 cmd.ExecuteNonQuery();
 
@@ -176,7 +176,7 @@ namespace Projet_C.Management
                 string sQDOB= pl.DateOfBirth.ToString(format);*/
 
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "update dbo.Players set username=@USER,password=@PWD,pseudo=@PSEU,registrationdate=@RD,dateofbirth=@DOB,Credit=@CRD where ID=@ID ";
+                cmd.CommandText = "update dbo.players set username=@USER,password=@PWD,pseudo=@PSEU,registrationdate=@RD,dateofbirth=@DOB,Credit=@CRD where ID=@ID ";
                 cmd.Parameters.AddWithValue("USER", pl.Username);
                 cmd.Parameters.AddWithValue("PWD", pl.Password);
                 cmd.Parameters.AddWithValue("PSEU", pl.Pseudo);
