@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projet_C"
+        xmlns:backend="clr-namespace:Projet_C.Backend"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="768" Width="1024">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -13,146 +14,62 @@
         </Grid.ColumnDefinitions>
         <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_admin" SelectionChanged="Selector_OnSelected">
             <ListViewItem>
-                <Label>AD Admin</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD User Add</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD User Delete</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD User Modify</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD video game</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD video game add</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD video game delete</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD video game modify</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>AD loan</Label>
+                <Label>Admin Menu</Label>
             </ListViewItem>
         </ListView>
 
         <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_player" SelectionChanged="Selector_OnSelected2">
             <ListViewItem>
-                <Label>PL video game</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>PL video game delete</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>PL loan</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>PL account</Label>
-            </ListViewItem>
-            <ListViewItem>
-                <Label>PL modify account</Label>
+                <Label>Menu Player</Label>
             </ListViewItem>
         </ListView>
-
-        <!--gestion admin user-->
         
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user" Visibility="Collapsed">
-            <DataGrid x:Name="dg_ad_user" AutoGenerateColumns="True" ></DataGrid>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Width="755" Margin="6,26,6,76">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Row="0" Height="25" VerticalContentAlignment="Center" TextAlignment="Left" VerticalAlignment="Center" Margin="5,0" x:Name="VideoGameSB" TextChanged="VideoGameSB_OnTextChanged"></TextBox>
+                <Image Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Source="Resources/Images/username.png"></Image>
+                <ListView Grid.Row="1" Grid.Column="0" x:Name="VideoGameLV" ItemsSource="{Binding videoGames}" SelectionChanged="VideoGameLV_OnSelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type backend:VideoGame}">
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" Margin="0,15,0,50"
+                       FontSize="35" FontWeight="Bold" x:Name="SelectedVideoGameNameTB"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Console" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"
+                       x:Name="SelectedVideoGameConsoleTB"/>
+                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Cout " HorizontalAlignment="Center" FontWeight="Bold"/>
+
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
+                       x:Name="SelectedVideoGameCreditCostTB"/>
+                </Grid>
+            </Grid>
+
         </Grid>
 
-        <!--gestion admin user add-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_add" Visibility="Collapsed">
-            <Button x:Name="ad_add_user"
-                    Click="Ad_add_user_OnClick">
-                Add user
-            </Button>
-        </Grid>
-        <!--gestion admin user delete-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_delete" Visibility="Collapsed">
-            <Button x:Name="ad_delete_user"
-                    Click="Ad_delete_user_OnClick">
-                Delete user
-            </Button>
-        </Grid>
-        <!--gestion admin user modify-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_modify" Visibility="Collapsed">
-            <Button x:Name="ad_modify_user"
-                    Click="Ad_modify_user_OnClick">
-                Modify user
-            </Button>
-        </Grid>
-        <!--gestion admin video game-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game" Visibility="Collapsed">
-            <DataGrid x:Name="dg_ad_video_game" AutoGenerateColumns="True" ></DataGrid>
-        </Grid>
-
-        <!--gestion admin video game add-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game_add" Visibility="Collapsed">
-            <Button x:Name="ad_add_video_game"
-                    Click="Ad_add_video_game_OnClick">
-                Add video game
-            </Button>
-        </Grid>
-        <!--gestion admin video game delete-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game_delete" Visibility="Collapsed">
-            <Button x:Name="ad_delete_video_game"
-                    Click="Ad_delete_video_game_OnClick">
-                delete video game
-            </Button>
-        </Grid>
-
-        <!--gestion admin video game modify-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_video_game_modify" Visibility="Collapsed">
-            <Button x:Name="ad_modify_video_game"
-                    Click="Ad_modify_video_game_OnClick">
-                modify video game
-            </Button>
-        </Grid>
-
-        <!--gestion admin loan-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_ad_user_loan" Visibility="Collapsed">
-            <DataGrid x:Name="dg_ad_user_loan" AutoGenerateColumns="True" ></DataGrid>
-        </Grid>
         
-        <!--gestion player video game-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_video_game" Visibility="Collapsed">
-            <DataGrid x:Name="dg_pl_video_game" AutoGenerateColumns="True" ></DataGrid>
-        </Grid>
-        
-        <!--gestion player video game add-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_video_game_add" Visibility="Collapsed">
-            <Button x:Name="pl_add_video_game"
-                    Click="Ad_add_video_game_OnClick">
-                add video game
-            </Button>
-        </Grid>
-
-        <!--gestion player loan-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_user_loan" Visibility="Collapsed">
-            <DataGrid x:Name="dg_pl_user_loan" AutoGenerateColumns="True" ></DataGrid>
-        </Grid>
-
-        <!--gestion player user account-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_user_account" Visibility="Collapsed">
-            <Button x:Name="pl_user_account"
-                    Click="Pl_user_account_OnClick">
-                Account
-            </Button>
-        </Grid>
-
-        <!--gestion player modify account-->
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="grid_pl_modify_account" Visibility="Collapsed">
-            <Button x:Name="pl_modify_account"
-                    Click="Pl_modify_account_OnClick">
-                Modify Account
-            </Button>
-        </Grid>
-
         <!--Page de Connection-->
         <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="MediumAquamarine" x:Name="Login_ui" d:Visibility="Hidden">
             <Border CornerRadius="15" Padding="25" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -184,5 +101,6 @@
             </Border>
 
         </Grid>
+        
     </Grid>
 </Window>

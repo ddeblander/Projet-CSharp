@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Projet_C.Management;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +8,20 @@ using System.Threading.Tasks;
 namespace Projet_C.Backend
 {
     
-    public class Loan
+    public class Loan 
     {
-        private DateTime startDate,endDate;
-        private Copy copy;
-        bool ongoing;
-        public Loan(DateTime SD,DateTime ED) 
+        public Loan(int id,Copy c,DateTime SD,DateTime ED) 
         {
-           
+            Id= id;
+            Copie = c;
+            StartDate = SD;
+            EndDate = ED;
         }
+
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public Copy Copie  { get; set; }
+        public int Id { get; set; }
 
     }
 }

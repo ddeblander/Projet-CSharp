@@ -28,7 +28,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Copies";
+                cmd.CommandText = "select * from dbo.copies";
 
 
                 reader = cmd.ExecuteReader();
@@ -38,9 +38,9 @@ namespace Projet_C.Management
                     ad = new Copy(DVG.ReadByID(reader.GetInt32(1)), DP.ReadByID(reader.GetInt32(2)));
                     
                     ad.Id= reader.GetInt32(0);
-                    if(!reader.IsDBNull(3))
+                    if(!reader.IsDBNull(4))
                     {
-                        ad.Pl_Borrower =DP.ReadByID(reader.GetInt32(3));
+                        ad.Pl_Borrower =DP.ReadByID(reader.GetInt32(4));
                     }
                     
                     list.Add(ad);
@@ -62,7 +62,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Copies where ID=@ID";
+                cmd.CommandText = "select * from dbo.copies where id=@ID";
                 cmd.Parameters.AddWithValue("ID", ID);
                 reader = cmd.ExecuteReader();
 
@@ -70,9 +70,9 @@ namespace Projet_C.Management
                 {
                     ad = new Copy(DVG.ReadByID(reader.GetInt32(1)), DP.ReadByID(reader.GetInt32(2)));
                     ad.Id = reader.GetInt32(0);
-                    if (!reader.IsDBNull(3))
+                    if (!reader.IsDBNull(4))
                     {
-                        ad.Pl_Borrower = DP.ReadByID(reader.GetInt32(3));
+                        ad.Pl_Borrower = DP.ReadByID(reader.GetInt32(4));
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Copies where ID_VideoGame=@VG and ID_Player_owner=@PO";
+                cmd.CommandText = "select * from dbo.copies where ID_VideoGame=@VG and ID_Player=@PO";
                 cmd.Parameters.AddWithValue("VG", vG.Id);
                 cmd.Parameters.AddWithValue("PO", pl_Owner.Id_User);
                 reader = cmd.ExecuteReader();
@@ -98,9 +98,9 @@ namespace Projet_C.Management
                 {
                     ad = new Copy(DVG.ReadByID(reader.GetInt32(1)), DP.ReadByID(reader.GetInt32(2)));
                     ad.Id = reader.GetInt32(0);
-                    if (!reader.IsDBNull(3))
+                    if (!reader.IsDBNull(4))
                     {
-                        ad.Pl_Borrower = DP.ReadByID(reader.GetInt32(3));
+                        ad.Pl_Borrower = DP.ReadByID(reader.GetInt32(4));
                     }
                 }
             }
@@ -118,8 +118,8 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "insert into dbo.Copies(ID_VideoGame,ID_Player_owner) values(@IDGAME,@IDPLAYER)";
-                cmd.Parameters.AddWithValue("IDGAME", ad.Vd.Id);
+                cmd.CommandText = "insert into dbo.copies(ID_VideoGame,ID_Player) values(@IDGAME,@IDPLAYER)";
+                cmd.Parameters.AddWithValue("IDGAME", ad.Vg.Id);
                 cmd.Parameters.AddWithValue("IDPLAYER", ad.Pl_owner.Id_User);
                 cmd.ExecuteNonQuery();
 
@@ -138,7 +138,7 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "delete dbo.Copies where ID=@ID";
+                cmd.CommandText = "delete dbo.copies where id=@ID";
                 cmd.Parameters.AddWithValue("ID", ad.Id);
                 cmd.ExecuteNonQuery();
 
@@ -156,10 +156,14 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "update dbo.Copies set ID_VideoGame=@IDGAME,ID_Player_owner=@IDPLAYER where ID=@ID";
-                cmd.Parameters.AddWithValue("IDGAME", ad.Vd.Id);
+                cmd.CommandText = "update dbo.copies set ID_VideoGame=@IDGAME,ID_Player=@IDPLAYER,ID_playerloan=@IDPLLOAN where id=@ID";
+                cmd.Parameters.AddWithValue("IDGAME", ad.Vg.Id);
                 cmd.Parameters.AddWithValue("IDPLAYER", ad.Pl_owner.Id_User);
                 cmd.Parameters.AddWithValue("ID", ad.Id);
+                if(ad.Pl_Borrower!=null)
+                    cmd.Parameters.AddWithValue("IDPLLOAN", ad.Pl_Borrower);
+                else
+                    cmd.Parameters.AddWithValue("IDPLLOAN",null);
                 cmd.ExecuteNonQuery();
 
             }

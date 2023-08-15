@@ -29,8 +29,8 @@ namespace Projet_C.Management
                 while (reader.Read())
                 {
 
-                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
-                    pl.Credit= reader.GetInt32(6);
+                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5),reader.GetDateTime(6)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
+                    pl.Credit= reader.GetInt32(7);
                     list.Add(pl);
                 }
             }
@@ -56,10 +56,10 @@ namespace Projet_C.Management
                 reader = cmd.ExecuteReader();
 
                 while (reader.Read())
-                { 
-                    
-                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
-                    pl.Credit = reader.GetInt32(6);
+                {
+
+                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5), reader.GetDateTime(6)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
+                    pl.Credit = reader.GetInt32(7);
                 }
             }
             catch (Exception ex) { Trace.Write(ex.Message); }
@@ -83,8 +83,8 @@ namespace Projet_C.Management
 
                 while (reader.Read())
                 {
-                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
-                    pl.Credit = reader.GetInt32(6);
+                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5), reader.GetDateTime(6)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
+                    pl.Credit = reader.GetInt32(7);
                 }
             }
             catch (Exception ex) { Trace.WriteLine(ex.Message); }
@@ -107,8 +107,8 @@ namespace Projet_C.Management
 
                 while (reader.Read())
                 {
-                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
-                    pl.Credit = reader.GetInt32(6);
+                    pl = new Player(reader.GetString(3), reader.GetDateTime(4), reader.GetDateTime(5), reader.GetDateTime(6)) { Id_User = reader.GetInt32(0), Username = reader.GetString(1), Password = reader.GetString(2) };
+                    pl.Credit = reader.GetInt32(7);
                 }
             }
             catch (Exception ex) { Trace.WriteLine(ex.Message); }
@@ -120,7 +120,7 @@ namespace Projet_C.Management
         public Boolean Insert(Player pl)
         {
 
-            if (ReadUser(pl.Username) != null)
+            if (ReadByID(pl.Id_User) != null)
             {
 
                 return false;
@@ -130,13 +130,14 @@ namespace Projet_C.Management
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "insert into dbo.players(username,password,pseudo,registrationdate,dateofbirth,Credit) values(@USER,@PWD,@PSEU,@RD,@DOB,@CRD)";
+                cmd.CommandText = "insert into dbo.players(username,password,pseudo,registrationdate,dateofbirth,bonusAcquired,credit) values(@USER,@PWD,@PSEU,@RD,@DOB,@BA,@CRD)";
                 cmd.Parameters.AddWithValue("USER", pl.Username);
                 cmd.Parameters.AddWithValue("PWD", pl.Password);
                 cmd.Parameters.AddWithValue("PSEU", pl.Pseudo);
                 cmd.Parameters.AddWithValue("RD", pl.RegistrationDate);
                 cmd.Parameters.AddWithValue("DOB", pl.DateOfBirth);
                 cmd.Parameters.AddWithValue("CRD", pl.Credit);
+                cmd.Parameters.AddWithValue("BA", pl.BonusAcquired);
                 cmd.ExecuteNonQuery();
 
             }
@@ -153,6 +154,8 @@ namespace Projet_C.Management
             connection.Open();
             try
             {
+                if (ReadByID(pl.Id_User) == null)
+                    return false;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = "delete dbo.players where ID=@ID";
                 cmd.Parameters.AddWithValue("ID", pl.Id_User);
@@ -176,7 +179,7 @@ namespace Projet_C.Management
                 string sQDOB= pl.DateOfBirth.ToString(format);*/
 
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "update dbo.players set username=@USER,password=@PWD,pseudo=@PSEU,registrationdate=@RD,dateofbirth=@DOB,Credit=@CRD where ID=@ID ";
+                cmd.CommandText = "update dbo.players set username=@USER,password=@PWD,pseudo=@PSEU,registrationdate=@RD,dateofbirth=@DOB,bonusAcquired=@BA,Credit=@CRD where ID=@ID ";
                 cmd.Parameters.AddWithValue("USER", pl.Username);
                 cmd.Parameters.AddWithValue("PWD", pl.Password);
                 cmd.Parameters.AddWithValue("PSEU", pl.Pseudo);
@@ -184,6 +187,7 @@ namespace Projet_C.Management
                 cmd.Parameters.AddWithValue("DOB", pl.DateOfBirth);                
                 cmd.Parameters.AddWithValue("CRD", pl.Credit);
                 cmd.Parameters.AddWithValue("ID", pl.Id_User);
+                cmd.Parameters.AddWithValue("BA", pl.BonusAcquired);
                 Trace.WriteLine(pl.Pseudo); 
 
                 cmd.ExecuteNonQuery();

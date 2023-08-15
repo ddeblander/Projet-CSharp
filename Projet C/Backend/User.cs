@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Projet_C.Backend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,7 @@ namespace Projet_C.Backend
     
     public abstract class User
     {
-        protected int id_User;
-        protected string username;
-        protected string password;
 
-        public bool Login()
-        {
-            return true;
-        }
         public string Username { get; set; }
         public string Password { get; set; }
 

@@ -4,17 +4,20 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-public class Booking
+namespace Projet_C.Backend
 {
-	private DateTime bookingDate;
-	public Booking(DateTime bd)
+	public class Booking
 	{
-		BookingDate= bd;	
-	}
-	public void Delete()
-	{
-        //BookingDate= 0;
+		private DateTime bookingDate;
+		public Booking(DateTime bd)
+		{
+			BookingDate = bd;
+		}
+		public void Delete()
+		{
+			//BookingDate= 0;
 
-    }
-	public DateTime BookingDate { get; set; }
+		}
+		public DateTime BookingDate { get; set; }
+	}
 }

@@ -4,22 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-public class VideoGame
+namespace Projet_C.Backend
 {
-	private int id;
-	private string name;
-	private string console;
-	private int creditCost;
-
-	public VideoGame(string name, string cons)
+    public class VideoGame
 	{
-		Console=cons;
-		Name=name;
+		private int id;
+		private string name;
+		private string console;
+		private int creditCost;
 
-    }
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Console { get; set; }
-    public int CreditCost { get; set; }
+		public VideoGame(string name, string cons)
+		{
+			Console=cons;
+			Name=name;
 
+		}
+		public int Id { get; set; }
+		public string Name { get; set; }
+		public string Console { get; set; }
+		public int CreditCost { get; set; }
+
+		}
 }

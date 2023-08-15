@@ -1,4 +1,5 @@
-﻿using Projet_C.Management;
+﻿using Projet_C.Backend;
+using Projet_C.Management;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Projet_C
             DateTime dateOfBirth = (DateTime)plDateOfBirth.SelectedDate;
             int credit = 10;
 
-            Player pl = new Player(pseudo, date, dateOfBirth) {Username=username,Password=password };
+            Player pl = new Player(pseudo, date, dateOfBirth, dateOfBirth) {Username=username,Password=password };
             pl.Credit= credit;
             daoP.Insert(pl);
 
