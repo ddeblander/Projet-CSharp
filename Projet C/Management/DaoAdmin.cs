@@ -3,15 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Projet_C.Management
 {
-    internal class DaoAdmin : Dao
+    public class DaoAdmin : Dao
     {
+        public Admin CurrentAdmin { get; set; }
         public List<Admin> ReadAll()
         {
             

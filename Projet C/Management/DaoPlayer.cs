@@ -2,17 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Projet_C.Management
 {
-    internal class DaoPlayer : Dao
+    public class DaoPlayer : Dao
     {
+        public Player CurrentPlayer { get; set; }
+
+        public DaoPlayer() 
+        { 
+        }
         public List<Player> ReadAll()
         {
             connection.Open();

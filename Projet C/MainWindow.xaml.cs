@@ -1,21 +1,11 @@
 ﻿using Projet_C.Backend;
+using Projet_C.Backend.Singleton;
 using Projet_C.Management;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Projet_C
 {
@@ -40,8 +30,10 @@ namespace Projet_C
             InitializeComponent();
             menu_selection_admin.SelectedIndex = 0;
             menu_selection_player.SelectedIndex = 0;
+            lVG = new List<VideoGame>();
+            lVGSearched = new List<VideoGame>();
 
-            lVG= daoVG.ReadAll();
+            lVG= DaoVideoGameSingleton.Instance.ReadAll();
             lVGSearched = lVG;
             videoGames = new ObservableCollection<VideoGame>(lVGSearched);
             VideoGameLV.ItemsSource = videoGames;
@@ -111,14 +103,16 @@ namespace Projet_C
         private void VideoGameSB_OnTextChanged(object sender, TextChangedEventArgs  e)
         {
             videoGames.Clear();
-            foreach (var item in lVG)
+            /*foreach (var item in lVG)
             {
                 if(item.Name.ToLower().Contains(VideoGameSB.Text.ToLower()))
                 {
                     
                     videoGames.Add(item);
                 }
-            }
+            }*/
+            var searchTB =(TextBox)sender;
+            lVG.Where(x=> x.Name.ToLower().Contains(searchTB.Text.ToLower())).ToList().ForEach(x=> videoGames.Add(x));
             if (videoGames.Count == 0 ) 
             {
                 SelectedVideoGameNameTB.Text = "";
@@ -190,13 +184,14 @@ namespace Projet_C
 
         private void ButtonLogin_OnClick(object sender, RoutedEventArgs e)
         {
-            Admin  ad = dao.ReadByUnique(login_user.Text,login_pwd.Password);
-            Player pl = daoP.ReadByUnique(login_user.Text, login_pwd.Password);
+            Admin  ad = DaoAdminSingleton.Instance.ReadByUnique(login_user.Text,login_pwd.Password);
+            Player pl = DaoPlayerSingleton.Instance.ReadByUnique(login_user.Text, login_pwd.Password);
    
             if (ad==null && pl==null)
             {
                 login_error_text.Visibility = Visibility.Visible;
                 login_pwd.Password = string.Empty;
+                MessageBox.Show("Pseudo/Mot de passe incorrect");
                 return;
             }
 
@@ -204,14 +199,18 @@ namespace Projet_C
             {
                 menu_selection_admin.Visibility = Visibility.Collapsed;
                 HideAdminGrid();
+                DaoPlayerSingleton.Instance.CurrentPlayer = pl;
             }
             else if(pl==null)
             {
                 menu_selection_player.Visibility = Visibility.Collapsed;
                 HidePlayerGrid();
+                DaoAdminSingleton.Instance.CurrentAdmin = ad;
             }
 
             Login_ui.Visibility = Visibility.Collapsed;
+            login_error_text.Visibility = Visibility.Visible;
+            login_pwd.Password = string.Empty;
         }
 
         private void ButtonReg_OnClick(object sender, RoutedEventArgs e)
@@ -221,7 +220,39 @@ namespace Projet_C
             register.Show();
         }
 
-       
+        private void Selector_OnSelected2(object sender, SelectionChangedEventArgs e)
+        {
+            ListView lv = (ListView)sender;
+            switch (lv.SelectedIndex)
+            {
+                case 2://déconnexion
+                    if(MessageBox.Show("Voulez-vous vous déconnecter ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        DaoPlayerSingleton.Instance.CurrentPlayer = null;
+                        DaoAdminSingleton.Instance.CurrentAdmin = null;
+                        Login_ui.Visibility = Visibility.Visible;
+                    }
+                    break;
+            }
+            lv.SelectedItem = null;
+        }
 
+        private void Selector_OnSelected(object sender, SelectionChangedEventArgs e)
+        {
+            ListView lv = (ListView)sender;
+            switch (lv.SelectedIndex)
+            {
+                case 1://déconnexion
+                    if (MessageBox.Show("Voulez-vous vous déconnecter ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        DaoPlayerSingleton.Instance.CurrentPlayer = null;
+                        DaoAdminSingleton.Instance.CurrentAdmin = null;
+                        Login_ui.Visibility = Visibility.Visible;
+                    }
+                    break;
+            }
+           
+            lv.SelectedItem = null;
+        }
     }
 }

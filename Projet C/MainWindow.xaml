@@ -16,15 +16,24 @@
             <ListViewItem>
                 <Label>Admin Menu</Label>
             </ListViewItem>
+            <ListViewItem>
+                <Label>Déconnexion</Label>
+            </ListViewItem>
         </ListView>
 
-        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_player" SelectionChanged="Selector_OnSelected2">
+        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_player" SelectionChanged="Selector_OnSelected">
             <ListViewItem>
-                <Label>Menu Player</Label>
+                <Label>Menu joueur</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>Liste</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>Déconnexion</Label>
             </ListViewItem>
         </ListView>
         
-        <Grid Grid.Row="1" Grid.Column="1">
+        <Grid Grid.Column="1">
             <Grid Width="755" Margin="6,26,6,76">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
@@ -34,7 +43,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Row="0" Height="25" VerticalContentAlignment="Center" TextAlignment="Left" VerticalAlignment="Center" Margin="5,0" x:Name="VideoGameSB" TextChanged="VideoGameSB_OnTextChanged"></TextBox>
+                <TextBox Grid.Row="0" Height="25" VerticalContentAlignment="Center" TextAlignment="Left" VerticalAlignment="Center" Margin="5,0" TextChanged="VideoGameSB_OnTextChanged"></TextBox>
                 <Image Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Source="Resources/Images/username.png"></Image>
                 <ListView Grid.Row="1" Grid.Column="0" x:Name="VideoGameLV" ItemsSource="{Binding videoGames}" SelectionChanged="VideoGameLV_OnSelectionChanged">
                     <ListView.ItemTemplate>
