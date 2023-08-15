@@ -1,8 +1,10 @@
 ﻿using Projet_C.Backend;
 using Projet_C.Backend.Singleton;
 using Projet_C.Management;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,75 +16,84 @@ namespace Projet_C
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DaoAdmin dao= new DaoAdmin();
-        private DaoPlayer daoP= new DaoPlayer();
-        private DaoVideoGame daoVG= new DaoVideoGame();
-        private DaoCopy daoCP= new DaoCopy();
 
         private List<VideoGame> lVG;
-        private List<VideoGame> lVGSearched;
+        private List<Loan> loanList;
+        private List<Copy> listCopy;
+
 
         private ObservableCollection<VideoGame> videoGames;
+        private ObservableCollection<Loan> loans;
+        private ObservableCollection<Copy> copies;
 
+        private VideoGame selectedAdminVideoGame;
         private VideoGame selectedVideoGame;
+        private VideoGame selectedCopyVideoGame;
+
+        private Copy selectedCopy;
+
+        
+
+        
+
         public MainWindow()
         {
             InitializeComponent();
             menu_selection_admin.SelectedIndex = 0;
             menu_selection_player.SelectedIndex = 0;
+
             lVG = new List<VideoGame>();
-            lVGSearched = new List<VideoGame>();
 
-            lVG= DaoVideoGameSingleton.Instance.ReadAll();
-            lVGSearched = lVG;
-            videoGames = new ObservableCollection<VideoGame>(lVGSearched);
-            VideoGameLV.ItemsSource = videoGames;
+
+            PopulateVideoGameList();
+
+            loanList = new List<Loan>();
+
+            listCopy= new List<Copy>();
+
+            Login_ui.Visibility = Visibility.Visible;
         }
 
-        private void Selector_OnSelected(object sender, RoutedEventArgs e)
+        private void PopulateVideoGameList()
         {
-            HideAdminGrid();
-            var listView = (ListView)sender;
-            switch (listView.SelectedIndex)
-            {
-                case 0:
-                   
-                    break;
+            lVG = DaoVideoGameSingleton.Instance.ReadAll();
+            videoGames = new ObservableCollection<VideoGame>();
 
-                case 1:
-                    
-                    break;
+            VideoGameAdminListLV.ItemsSource = videoGames;
+            VideoGameLV.ItemsSource = videoGames;
+            lVG = lVG.OrderBy(x => x.Name).ToList();
+            lVG.ForEach(x=> videoGames.Add(x));
 
-                case 2:
-                   
-                    break;
-                case 3:
-                    
-                    break;
-
-                case 4:                    
-                                      
-                    break;
-
-                case 5:                  
-                    
-                    break;
-
-                case 6:
-                    
-                    break;
-                case 7:
-                    
-                    break;
-                case 8:                    
-                    
-                    break;
-
-                default:
-                    //grid_ad_user.Visibility = Visibility.Visible;
-                    break;
-            }
+            selectedVideoGame = videoGames.FirstOrDefault();
+            selectedAdminVideoGame = videoGames.FirstOrDefault();
+            FilterVideoGameAdmin(searchTB.Text);
         }
+        private void PopulateLoanList()
+        {
+            //loanList = DaoLoanSingleton.Instance.Read();
+            loans = new ObservableCollection<Loan>();
+
+            LoanLV.ItemsSource = loans;
+            loanList.OrderBy(x => x.Copie.Vg.Name);
+            loanList.ForEach(x=> loans.Add(x));
+             
+            
+        }
+
+        private void PopulateCopyList()
+        {
+            listCopy = DaoCopySingleton.Instance.ReadByPlayer(DaoPlayerSingleton.Instance.CurrentPlayer);
+            copies = new ObservableCollection<Copy>();
+
+            CopiesLV.ItemsSource = copies;
+
+            listCopy.OrderBy(x => x.Vg.Name);
+            listCopy.ForEach(x=> copies.Add(x));
+             
+            
+        }
+
+
         /// <summary>
         /// show selected videogame specs 
         /// </summary>
@@ -91,6 +102,7 @@ namespace Projet_C
             VideoGame vg = (VideoGame)((ListView)sender).SelectedItem;
             if(vg != null)
             {
+                selectedCopyVideoGame = vg;
                 SelectedVideoGameNameTB.Text = vg.Name;
                 SelectedVideoGameConsoleTB.Text = vg.Console;
                 SelectedVideoGameCreditCostTB.Text = vg.CreditCost.ToString();
@@ -103,14 +115,7 @@ namespace Projet_C
         private void VideoGameSB_OnTextChanged(object sender, TextChangedEventArgs  e)
         {
             videoGames.Clear();
-            /*foreach (var item in lVG)
-            {
-                if(item.Name.ToLower().Contains(VideoGameSB.Text.ToLower()))
-                {
-                    
-                    videoGames.Add(item);
-                }
-            }*/
+           
             var searchTB =(TextBox)sender;
             lVG.Where(x=> x.Name.ToLower().Contains(searchTB.Text.ToLower())).ToList().ForEach(x=> videoGames.Add(x));
             if (videoGames.Count == 0 ) 
@@ -129,89 +134,95 @@ namespace Projet_C
 
         }
 
-    /// <summary>
-    /// hide all admin grid
-    /// </summary>
-    public void HideAdminGrid()
-        {
-            
-        }
 
-        private void Selector_OnSelected2(object sender, RoutedEventArgs e)
+        private void LoanLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HidePlayerGrid();
-            var listView = (ListView)sender;
-            switch (listView.SelectedIndex)
+            loans.Clear();
+            Loan loan = (Loan)((ListView)sender).SelectedItem;
+            if (loan != null)
             {
-                case 0:
-                    
-                   
-                    ShowUserList();
-
-                    break;
-                case 1:                   
-                    
-                   
-                    break;
-
-                case 2:                   
-                    
-                    break;
-                case 3:
-                    
-                    break;
-                case 4:
-                   
-                    break;
-                default:
-                    
-                    break;
+                SelectedLoanGameNameTB.Text = loan.Copie.Vg.Name;
+                SelectedLoanDateBeginTB.Text = loan.StartDate.ToString();
+                SelectedLoanDateEndTB.Text = loan.EndDate.ToString();
             }
         }
 
-        /// <summary>
-        /// hide all player grid
-        /// </summary>
-        public void HidePlayerGrid()
+        private void CopiesLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
+            copies.Clear();
+            loans.Clear();
+
+            PopulateLoanList();
+            PopulateCopyList();
+
+            Copy copy = (Copy)((ListView)sender).SelectedItem;
+            if (copy != null)
+            {
+                SelectedCopyDateBeginTB.Text = loanList.Where(x=> x.Copie.Id==copy.Id).Last().StartDate.ToString()?? "Aucune date";
+                SelectedCopyDateEndTB.Text = loanList.Where(x => x.Copie.Id == copy.Id).Last().EndDate.ToString() ?? "Aucune date";
+                if (loanList.Where(x => x.Copie.Id == copy.Id).Last().Copie.Pl_Borrower == null)
+                    SelectedCopyPlayerBorrowedTB.Text = "Aucun locataire";
+                else
+                    SelectedCopyPlayerBorrowedTB.Text = loanList.Where(x => x.Copie.Id == copy.Id).Last().Copie.Pl_Borrower.Pseudo;
+            }
+
         }
 
-        private void ShowUserList()
-        {
-            
-        }
+
+
+
 
         private void ButtonLogin_OnClick(object sender, RoutedEventArgs e)
         {
+            LoanList.Visibility = Visibility.Collapsed;
+            listGames.Visibility = Visibility.Collapsed;
+            LoanLV.Visibility = Visibility.Collapsed;
+            GameManager.Visibility = Visibility.Collapsed;
             Admin  ad = DaoAdminSingleton.Instance.ReadByUnique(login_user.Text,login_pwd.Password);
-            Player pl = DaoPlayerSingleton.Instance.ReadByUnique(login_user.Text, login_pwd.Password);
-   
-            if (ad==null && pl==null)
+
+            if(ad != null)
             {
-                login_error_text.Visibility = Visibility.Visible;
+                menu_selection_admin.Visibility = Visibility.Visible;
+                GameManager.Visibility = Visibility.Visible;
+
+
+                menu_selection_player.Visibility = Visibility.Collapsed;
+                listGames.Visibility = Visibility.Collapsed;
+                LoanList.Visibility = Visibility.Collapsed;
+                DaoAdminSingleton.Instance.CurrentAdmin = ad;
+
+                Login_ui.Visibility = Visibility.Collapsed;
                 login_pwd.Password = string.Empty;
-                MessageBox.Show("Pseudo/Mot de passe incorrect");
                 return;
             }
 
-            else if(ad==null)
+            Player pl = DaoPlayerSingleton.Instance.ReadByUnique(login_user.Text, login_pwd.Password);
+            if(pl != null)
             {
                 menu_selection_admin.Visibility = Visibility.Collapsed;
-                HideAdminGrid();
+                GameManager.Visibility = Visibility.Collapsed;
+
+                menu_selection_player.Visibility = Visibility.Visible;
+                menu_selection_player.SelectedIndex = 0;
+
                 DaoPlayerSingleton.Instance.CurrentPlayer = pl;
-            }
-            else if(pl==null)
-            {
-                menu_selection_player.Visibility = Visibility.Collapsed;
-                HidePlayerGrid();
-                DaoAdminSingleton.Instance.CurrentAdmin = ad;
+
+                Login_ui.Visibility = Visibility.Collapsed;
+                login_pwd.Password = string.Empty;
+
+                PopulateLoanList();
+                return;
             }
 
-            Login_ui.Visibility = Visibility.Collapsed;
+            login_error_text.Visibility = Visibility.Visible;
+            login_pwd.Password = string.Empty;
+            MessageBox.Show("Pseudo/Mot de passe incorrect");
+            Login_ui.Visibility = Visibility.Visible;
             login_error_text.Visibility = Visibility.Visible;
             login_pwd.Password = string.Empty;
         }
+
+
 
         private void ButtonReg_OnClick(object sender, RoutedEventArgs e)
         {
@@ -225,7 +236,26 @@ namespace Projet_C
             ListView lv = (ListView)sender;
             switch (lv.SelectedIndex)
             {
-                case 2://déconnexion
+                case 0://menu player
+                    HideAll();
+                    break;
+                case 1://games list
+                    HideAll();
+                    listGames.Visibility = Visibility.Visible;
+                    break;
+                case 2://location list
+                    HideAll();
+                    LoanList.Visibility = Visibility.Visible;   
+                    break;
+                
+                case 3://player's copies list
+                    HideAll();
+                    PopulateCopyList();
+                    CopiesList.Visibility = Visibility.Visible;
+                    break;
+
+
+                case 4://logout
                     if(MessageBox.Show("Voulez-vous vous déconnecter ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         DaoPlayerSingleton.Instance.CurrentPlayer = null;
@@ -242,7 +272,11 @@ namespace Projet_C
             ListView lv = (ListView)sender;
             switch (lv.SelectedIndex)
             {
-                case 1://déconnexion
+                case 0:
+                    GameManager.Visibility = Visibility.Visible;
+                    LoanList.Visibility = Visibility.Collapsed;
+                    break;
+                case 1://logout
                     if (MessageBox.Show("Voulez-vous vous déconnecter ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         DaoPlayerSingleton.Instance.CurrentPlayer = null;
@@ -253,6 +287,143 @@ namespace Projet_C
             }
            
             lv.SelectedItem = null;
+        }
+
+
+        private void VideoGameAdminLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            VideoGame vg = (VideoGame)((ListView)sender).SelectedItem;
+            selectedAdminVideoGame = vg;
+            if (vg != null)
+            {
+                SelectedVideoGameAdminNameTB.Text = vg.Name;
+                SelectedVideoGameAdminConsoleTB.Text = vg.Console;
+                SelectedVideoGameAdminCreditCostTB.Text = vg.CreditCost.ToString();
+                DeleteBtn.Visibility = Visibility.Visible;
+            }
+        }
+        /// <summary>
+        /// delete the videogame selected
+        /// </summary>
+        private void ButtonBaseDelete_OnClick(object sender, RoutedEventArgs e)
+        {
+            DaoVideoGameSingleton.Instance.Delete(selectedAdminVideoGame);
+            PopulateVideoGameList();
+        }
+
+        /// <summary>
+        /// save a videogame selected or create a new one
+        /// </summary>
+        private void ButtonBaseSave_OnClick(object sender, RoutedEventArgs e)
+        {
+            string name = SelectedVideoGameAdminNameTB.Text;
+            string console = SelectedVideoGameAdminConsoleTB.Text;
+            int cost = 0;
+            if (int.TryParse(SelectedVideoGameAdminCreditCostTB.Text, NumberStyles.Any, CultureInfo.InvariantCulture,
+                    out var res))
+            {
+                cost = res;
+            }
+            else
+            {
+                MessageBox.Show("Erreur lors de la lecture du cout, remplacement par 0");
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                MessageBox.Show("Le nom ne peux pas être vide");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(console))
+            {
+                MessageBox.Show("Le nom ne peux pas être vide");
+                return;
+            }
+
+            VideoGame vg = new VideoGame(name, console);
+            vg.CreditCost = cost;
+            vg.Id = selectedAdminVideoGame.Id;
+
+            if (DeleteBtn.Visibility == Visibility.Visible)
+            {
+                DaoVideoGameSingleton.Instance.Update(vg);
+            }
+            else
+            {
+                DaoVideoGameSingleton.Instance.Insert(vg);
+            }
+            PopulateVideoGameList();
+        }
+
+        /// <summary>
+        /// propose a Videogame's copy 
+        /// </summary>
+        private void ButtonBaseOnLoan_OnClick(object sender, RoutedEventArgs e)
+        {
+            if(selectedCopyVideoGame!=null)
+            {
+                Copy cp = new Copy(selectedCopyVideoGame, DaoPlayerSingleton.Instance.CurrentPlayer);
+                if(DaoCopySingleton.Instance.Insert(cp))
+                    MessageBox.Show("copie en location.");
+                else
+                    MessageBox.Show("problème lors de l'insertion, veuillez réessayer .");
+            }
+            else 
+                MessageBox.Show("Choisissez d'abord un jeu avant de le proposer en location");
+
+            PopulateCopyList();
+
+
+        }
+        /// <summary>
+        /// loan a videogame selected or reserve one 
+        /// </summary>
+        private void ButtonBaseLoan_OnClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            FilterVideoGameAdmin(tb.Text);
+        }
+
+        private void FilterVideoGameAdmin(string filter)
+        {
+            if (string.IsNullOrEmpty(filter)) return;
+            videoGames.Clear();
+            lVG.Where(x => x.Name.ToLower().Contains(filter.ToLower())).ToList().ForEach(x =>
+            {
+                videoGames.Add(x);
+            });
+        }
+
+        private void ButtonBase_OnAdd_OnClick(object sender, RoutedEventArgs e)
+        {
+            DeleteBtn.Visibility = Visibility.Hidden;
+            SelectedVideoGameAdminConsoleTB.Text = string.Empty;
+            SelectedVideoGameAdminNameTB.Text = string.Empty;
+            SelectedVideoGameAdminCreditCostTB.Text = string.Empty;
+        }
+
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            App.Current.Shutdown(0);
+        }
+
+        private void HideAll()
+        {
+            LoanList.Visibility = Visibility.Collapsed;
+            listGames.Visibility = Visibility.Collapsed;
+            LoanLV.Visibility = Visibility.Collapsed;
+            GameManager.Visibility = Visibility.Collapsed;
+            Login_ui.Visibility = Visibility.Collapsed;
+            login_error_text.Visibility = Visibility.Collapsed;
+            CopiesList.Visibility = Visibility.Collapsed;
         }
     }
 }

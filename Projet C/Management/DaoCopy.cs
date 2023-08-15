@@ -77,33 +77,34 @@ namespace Projet_C.Management
             cmd.Parameters.Clear();
             return ad;
         }
-        public Copy ReadByUnique(VideoGame vG, Player pl_Owner)
+        public List<Copy> ReadByPlayer(Player pl_Owner)
         {
             connection.Open();
+            List<Copy> listCopy= new List<Copy>();
 
-            Copy ad = null;
+            Copy cp = null;
             try
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.copies where ID_VideoGame=@VG and ID_Player=@PO";
-                cmd.Parameters.AddWithValue("VG", vG.Id);
-                cmd.Parameters.AddWithValue("PO", pl_Owner.Id_User);
+                cmd.CommandText = "select * from dbo.copies where ID_Player=@PID";
+                cmd.Parameters.AddWithValue("PID", pl_Owner.Id_User);
                 reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    ad = new Copy(DVG.ReadByID(reader.GetInt32(1)), DP.ReadByID(reader.GetInt32(2)));
-                    ad.Id = reader.GetInt32(0);
+                    cp = new Copy(DVG.ReadByID(reader.GetInt32(1)), DP.ReadByID(reader.GetInt32(2)));
+                    cp.Id = reader.GetInt32(0);
                     if (!reader.IsDBNull(4))
                     {
-                        ad.Pl_Borrower = DP.ReadByID(reader.GetInt32(4));
+                        cp.Pl_Borrower = DP.ReadByID(reader.GetInt32(4));
                     }
+                    listCopy.Add(cp);
                 }
             }
             catch (Exception ex) { Trace.WriteLine(ex.Message); }
             cmd.Parameters.Clear();
             connection.Close();
-            return ad;
+            return listCopy;
         }
        
 

@@ -152,11 +152,6 @@ namespace Projet_C.Management
         }
         public Boolean Update(VideoGame vd)
         {
-            if (ReadByUnique(vd.Name, vd.Console) != null)
-            {
-                return false;
-
-            }
             connection.Open();
             try
             {

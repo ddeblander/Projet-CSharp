@@ -12,28 +12,100 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_admin" SelectionChanged="Selector_OnSelected">
+        
+        <!-- left column-->
+        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_admin" SelectionChanged="Selector_OnSelected" d:IsHidden="True">
             <ListViewItem>
-                <Label>Admin Menu</Label>
+                <Label>Gestion Jeux</Label>
             </ListViewItem>
             <ListViewItem>
                 <Label>Déconnexion</Label>
             </ListViewItem>
         </ListView>
 
-        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_player" SelectionChanged="Selector_OnSelected">
+        <ListView Grid.Row="0" Grid.Column="0" x:Name="menu_selection_player" SelectionChanged="Selector_OnSelected2">
             <ListViewItem>
                 <Label>Menu joueur</Label>
             </ListViewItem>
             <ListViewItem>
-                <Label>Liste</Label>
+                <Label>Liste des jeux</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>Liste de vos locations</Label>
+            </ListViewItem>
+            <ListViewItem>
+                <Label>Liste de vos copies</Label>
             </ListViewItem>
             <ListViewItem>
                 <Label>Déconnexion</Label>
             </ListViewItem>
         </ListView>
+
+        <!-- right column -->
+
+        <!-- Admin -->
+        <Grid Grid.Column="1" x:Name="GameManager" d:IsHidden="true">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Row="0" HorizontalAlignment="Stretch">
+                <TextBox  Height="25" VerticalContentAlignment="Center" TextAlignment="Left" VerticalAlignment="Center" Margin="5,0"
+                         x:Name="searchTB"
+                         TextChanged="TextBoxBase_OnTextChanged" HorizontalAlignment="Left" MinWidth="150"/>
+                <Button Width="30" Height="30" HorizontalAlignment="Right" VerticalContentAlignment="Center" Click="ButtonBase_OnAdd_OnClick">
+                    <TextBlock FontWeight="Bold" FontSize="25" Text="+" VerticalAlignment="Center" TextAlignment="Center"/>
+                </Button>
+            </DockPanel>
+            <ListView Grid.Row="1" Grid.Column="0" x:Name="VideoGameAdminListLV" SelectionChanged="VideoGameAdminLV_OnSelectionChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type backend:VideoGame}">
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" Margin="0,15,0,50" VerticalAlignment="Center" MinWidth="250"
+                         FontSize="35" FontWeight="Bold" x:Name="SelectedVideoGameAdminNameTB"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Console" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" MinHeight="25"/>
+                <TextBox Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"
+                         x:Name="SelectedVideoGameAdminConsoleTB" VerticalAlignment="Center" MinHeight="25"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Cout " HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" MinHeight="25"/>
+
+                <TextBox Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" VerticalAlignment="Center" MinHeight="25"
+                         x:Name="SelectedVideoGameAdminCreditCostTB"/>
+
+                <Button Grid.Column="1" Grid.Row="3" Margin="5" Click="ButtonBaseDelete_OnClick" x:Name="DeleteBtn">
+                    <Label Content="Supprimer"/>
+                </Button>
+
+                <Button Grid.Column="0" Grid.Row="3" Margin="5" Click="ButtonBaseSave_OnClick">
+                    <Label Content="Sauvegarder"/>
+                </Button>
+            </Grid>
+        </Grid>
         
-        <Grid Grid.Column="1">
+        <!-- Player -->
+
+        <Grid Grid.Column="1"  x:Name="listGames" d:IsHidden="True">
+            <!-- games list-->
+
             <Grid Width="755" Margin="6,26,6,76">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
@@ -45,7 +117,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Row="0" Height="25" VerticalContentAlignment="Center" TextAlignment="Left" VerticalAlignment="Center" Margin="5,0" TextChanged="VideoGameSB_OnTextChanged"></TextBox>
                 <Image Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Source="Resources/Images/username.png"></Image>
-                <ListView Grid.Row="1" Grid.Column="0" x:Name="VideoGameLV" ItemsSource="{Binding videoGames}" SelectionChanged="VideoGameLV_OnSelectionChanged">
+                <ListView Grid.Row="1" Grid.Column="0" x:Name="VideoGameLV" SelectionChanged="VideoGameLV_OnSelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type backend:VideoGame}">
                             <TextBlock Text="{Binding Name}"/>
@@ -66,21 +138,131 @@
 
                     <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" Margin="0,15,0,50"
                        FontSize="35" FontWeight="Bold" x:Name="SelectedVideoGameNameTB"/>
+                    
                     <TextBlock Grid.Column="0" Grid.Row="1" Text="Console" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"
                        x:Name="SelectedVideoGameConsoleTB"/>
+                    
                     <TextBlock Grid.Column="0" Grid.Row="2" Text="Cout " HorizontalAlignment="Center" FontWeight="Bold"/>
-
                     <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
                        x:Name="SelectedVideoGameCreditCostTB"/>
+
+                    <Button Grid.Column="1" Grid.Row="3" Margin="5" Click="ButtonBaseOnLoan_OnClick" x:Name="OnLoanBT">
+                        <Label Content="proposer à la reservation"/>
+                    </Button>
+
+                    <Button Grid.Column="0" Grid.Row="3" Margin="5" Click="ButtonBaseLoan_OnClick">
+                        <Label Content="reserver"/>
+                    </Button>
+                </Grid>
+            </Grid>
+
+        </Grid>
+        <!-- player menu-->
+
+        <Grid Grid.Column="1"  x:Name="LoanList" d:IsHidden="True"> 
+            
+            <Grid Width="755" Margin="6,26,6,76">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Row="0" Height="25" VerticalContentAlignment="Center" TextAlignment="Left" VerticalAlignment="Center" Margin="5,0"  > </TextBox> 
+                <Image Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Source="Resources/Images/username.png"></Image>
+                <ListView Grid.Row="1" Grid.Column="0" x:Name="LoanLV"  SelectionChanged="LoanLV_OnSelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type backend:Loan}">
+                            <TextBlock Text="{Binding Copie.Vg.Name}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" Margin="0,15,0,50"
+                       FontSize="35" FontWeight="Bold" x:Name="SelectedLoanGameNameTB"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Date de prêt" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"
+                       x:Name="SelectedLoanDateBeginTB"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Date de fin  " HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
+                       x:Name="SelectedLoanDateEndTB"/>
                 </Grid>
             </Grid>
 
         </Grid>
 
-        
+        <!-- player copies list-->
+            
+        <Grid Grid.Column="1"  x:Name="CopiesList">
+
+            <Grid Width="755" Margin="6,26,6,76">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Source="Resources/Images/username.png"></Image>
+                <ListView Grid.Row="1" Grid.Column="0" x:Name="CopiesLV"  SelectionChanged="CopiesLV_OnSelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type backend:Copy}">
+                            <TextBlock Text="{Binding Vg.Name}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>      
+
+                    <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" Margin="0,15,0,50"
+                       FontSize="35" FontWeight="Bold" x:Name="SelectedCopyGameNameTB"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Pseudo du locataire" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"
+                       x:Name="SelectedCopyPlayerBorrowedTB"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Date de début  " HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
+                       x:Name="SelectedCopyDateBeginTB"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="3" Text="Date de fin  " HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3"
+                       x:Name="SelectedCopyDateEndTB"/>
+                </Grid>
+            </Grid>
+
+        </Grid>
+
+
         <!--Page de Connection-->
-        <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="MediumAquamarine" x:Name="Login_ui" d:Visibility="Hidden">
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+              Background="MediumAquamarine" x:Name="Login_ui" d:Visibility="Hidden" >
             <Border CornerRadius="15" Padding="25" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="100">
                     <Label FontWeight="DemiBold" HorizontalContentAlignment="Left" Opacity="0.9">UserName</Label>

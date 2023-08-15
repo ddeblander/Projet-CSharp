@@ -22,7 +22,18 @@ namespace Projet_C.Backend
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Console { get; set; }
-		public int CreditCost { get; set; }
+		public int CreditCost
+		{
+			get { return creditCost; }
+			set 
+			{ 
+				if(value>0 && value<=5)
+					creditCost = value;
+				else
+					creditCost = int.MaxValue;
+			}
+		}
+
 
 		}
 }

@@ -42,6 +42,12 @@ namespace Projet_C
 
             MainWindow mainWindow = new MainWindow();
             this.Visibility = Visibility.Hidden;
+
+            mainWindow.Show();
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
         }
     }
