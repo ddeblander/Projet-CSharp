@@ -158,17 +158,50 @@ namespace Projet_C.Management
                 cmd.Parameters.AddWithValue("IDPLAYER", ad.Pl_owner.Id_User);
                 cmd.Parameters.AddWithValue("ID", ad.Id);
                 if(ad.Pl_Borrower!=null)
-                    cmd.Parameters.AddWithValue("IDPLLOAN", ad.Pl_Borrower);
+                    cmd.Parameters.AddWithValue("IDPLLOAN", ad.Pl_Borrower.Id_User);
                 else
                     cmd.Parameters.AddWithValue("IDPLLOAN",null);
                 cmd.ExecuteNonQuery();
 
             }
-            catch (Exception ex) { Trace.WriteLine(ex.Message); }
+            catch (Exception ex) {
+                Trace.WriteLine(ex.Message);
+                return false;
+            }
 
             cmd.Parameters.Clear();
             connection.Close();
             return true;
+        }
+
+        public List<Copy> ReadByVideoGame(VideoGame vg)
+        {
+            connection.Open();
+            List<Copy> listCopy = new List<Copy>();
+
+            Copy cp = null;
+            try
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "select * from dbo.copies where ID_VideoGame=@IDVG";
+                cmd.Parameters.AddWithValue("IDVG", vg.Id);
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    cp = new Copy(DVG.ReadByID(reader.GetInt32(1)), DP.ReadByID(reader.GetInt32(2)));
+                    cp.Id = reader.GetInt32(0);
+                    if (!reader.IsDBNull(4))
+                    {
+                        cp.Pl_Borrower = DP.ReadByID(reader.GetInt32(4));
+                    }
+                    listCopy.Add(cp);
+                }
+            }
+            catch (Exception ex) { Trace.WriteLine(ex.Message); }
+            cmd.Parameters.Clear();
+            connection.Close();
+            return listCopy;
         }
 
 

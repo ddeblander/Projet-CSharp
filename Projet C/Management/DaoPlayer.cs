@@ -168,7 +168,7 @@ namespace Projet_C.Management
             connection.Close();
             return true;
         }
-        public void update(Player pl)
+        public bool update(Player pl)
         {
            
             connection.Open();
@@ -193,10 +193,15 @@ namespace Projet_C.Management
                 cmd.ExecuteNonQuery();
 
             }
-            catch (Exception ex) { Trace.WriteLine(ex.Message); }
+            catch (Exception ex) 
+            { 
+                Trace.WriteLine(ex.Message);
+                return false;
+            }
 
             cmd.Parameters.Clear();
             connection.Close();
+            return true;
         }
     }
 }

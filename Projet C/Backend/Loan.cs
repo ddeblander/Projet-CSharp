@@ -10,9 +10,8 @@ namespace Projet_C.Backend
     
     public class Loan 
     {
-        public Loan(int id,Copy c,DateTime SD,DateTime ED) 
+        public Loan(Copy c,DateTime SD,DateTime ED) 
         {
-            Id= id;
             Copie = c;
             StartDate = SD;
             EndDate = ED;

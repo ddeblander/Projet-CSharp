@@ -32,7 +32,8 @@ namespace Projet_C.Management
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    loan = new Loan(reader.GetInt32(0),dc.ReadByID(reader.GetInt32(3)),reader.GetDateTime(1),reader.GetDateTime(2));
+                    loan = new Loan(dc.ReadByID(reader.GetInt32(3)),reader.GetDateTime(1),reader.GetDateTime(2));
+                    loan.Id = reader.GetInt32(0);
                     list.Add(loan);
                 }
             }
@@ -58,8 +59,9 @@ namespace Projet_C.Management
 
                 while (reader.Read())
                 {
-                    loan = new Loan(reader.GetInt32(0), dc.ReadByID(reader.GetInt32(3)), reader.GetDateTime(1), reader.GetDateTime(2));
-                    
+                    loan = new Loan(dc.ReadByID(reader.GetInt32(3)), reader.GetDateTime(1), reader.GetDateTime(2));
+                    loan.Id = reader.GetInt32(0);
+
                 }
             }
             catch (Exception ex) { Trace.Write(ex.Message); }
@@ -81,7 +83,10 @@ namespace Projet_C.Management
                 cmd.ExecuteNonQuery();
 
             }
-            catch (Exception ex) { Trace.WriteLine(ex.Message); }
+            catch (Exception ex) { 
+                Trace.WriteLine(ex.Message);
+                return false;
+            }
 
             cmd.Parameters.Clear();
             connection.Close();

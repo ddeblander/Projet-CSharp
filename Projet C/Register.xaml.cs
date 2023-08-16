@@ -1,4 +1,5 @@
 ﻿using Projet_C.Backend;
+using Projet_C.Backend.Singleton;
 using Projet_C.Management;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,6 @@ namespace Projet_C
     /// </summary>
     public partial class Register : Window
     {
-        private DaoPlayer daoP = new DaoPlayer();
         public Register()
         {
             InitializeComponent();
@@ -34,16 +34,24 @@ namespace Projet_C
             String pseudo = plPseudo.Text;
             DateTime date = DateTime.Now;
             DateTime dateOfBirth = (DateTime)plDateOfBirth.SelectedDate;
-            int credit = 10;
+            if (date.Subtract(dateOfBirth).TotalMinutes < 0)
+                MessageBox.Show("date de naissance incohérente !");
+            else if (DaoPlayerSingleton.Instance.ReadUser(username)!=null ||(DaoAdminSingleton.Instance.ReadUser(username)!=null))
+                MessageBox.Show("utilisateur existe déjà, selectionnez un autre Username");
+            else
+            {
+                int credit = 10;
 
-            Player pl = new Player(pseudo, date, dateOfBirth, dateOfBirth) {Username=username,Password=password };
-            pl.Credit= credit;
-            daoP.Insert(pl);
+                Player pl = new Player(pseudo, date, dateOfBirth, dateOfBirth) { Username = username, Password = password };
+                pl.Credit = credit;
+                DaoPlayerSingleton.Instance.Insert(pl);
 
-            MainWindow mainWindow = new MainWindow();
-            this.Visibility = Visibility.Hidden;
+                MainWindow mainWindow = new MainWindow();
+                this.Visibility = Visibility.Hidden;
 
-            mainWindow.Show();
+                mainWindow.Show();
+            }
+            
         }
         protected override void OnClosed(EventArgs e)
         {

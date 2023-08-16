@@ -1,4 +1,5 @@
-﻿using Projet_C.Backend;
+﻿using ADO.Net.Client.Annotations;
+using Projet_C.Backend;
 using Projet_C.Backend.Singleton;
 using Projet_C.Management;
 using System;
@@ -100,14 +101,29 @@ namespace Projet_C
         private void VideoGameLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             VideoGame vg = (VideoGame)((ListView)sender).SelectedItem;
-            if(vg != null)
+            if (vg != null)
             {
                 selectedCopyVideoGame = vg;
                 SelectedVideoGameNameTB.Text = vg.Name;
                 SelectedVideoGameConsoleTB.Text = vg.Console;
                 SelectedVideoGameCreditCostTB.Text = vg.CreditCost.ToString();
+                int count = 0;
+
+                if (DaoCopySingleton.Instance.ReadByVideoGame(vg).Count() > 0)
+                {
+                    List<Copy> cpTest = DaoCopySingleton.Instance.ReadByVideoGame(vg).Where(x => x.isAvailable()).ToList();
+                    count = cpTest.Count();
+                    if (count > 0)
+                    {
+
+                        selectedCopy = cpTest.First();
+                    }
+                    
+
+                }
+                SelectedVideoGameavailableTB.Text = count.ToString();
+
             }
-            
         }
         /// <summary>
         /// search the videogame(s) by name 
@@ -149,21 +165,26 @@ namespace Projet_C
 
         private void CopiesLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            copies.Clear();
             loans.Clear();
-
             PopulateLoanList();
-            PopulateCopyList();
 
             Copy copy = (Copy)((ListView)sender).SelectedItem;
             if (copy != null)
             {
-                SelectedCopyDateBeginTB.Text = loanList.Where(x=> x.Copie.Id==copy.Id).Last().StartDate.ToString()?? "Aucune date";
-                SelectedCopyDateEndTB.Text = loanList.Where(x => x.Copie.Id == copy.Id).Last().EndDate.ToString() ?? "Aucune date";
-                if (loanList.Where(x => x.Copie.Id == copy.Id).Last().Copie.Pl_Borrower == null)
-                    SelectedCopyPlayerBorrowedTB.Text = "Aucun locataire";
+                if(loanList.Where(x => x.Copie.Id == copy.Id).Count()>0)
+                {
+                    Loan loan = loanList.Where(x => x.Copie.Id == copy.Id).Last();
+                
+                SelectedCopyDateBeginTB.Text = loan.StartDate.ToString();
+                SelectedCopyDateEndTB.Text = loan.EndDate.ToString();
+                SelectedCopyPlayerBorrowedTB.Text = loan.Copie.Pl_Borrower.Pseudo ;
+                }
                 else
-                    SelectedCopyPlayerBorrowedTB.Text = loanList.Where(x => x.Copie.Id == copy.Id).Last().Copie.Pl_Borrower.Pseudo;
+                {
+                    SelectedCopyDateBeginTB.Text = "Aucune date";
+                    SelectedCopyDateEndTB.Text = "Aucune date";
+                    SelectedCopyPlayerBorrowedTB.Text = "Aucun locataire";
+                }
             }
 
         }
@@ -381,7 +402,54 @@ namespace Projet_C
         /// </summary>
         private void ButtonBaseLoan_OnClick(object sender, RoutedEventArgs e)
         {
-            
+            if (selectedCopyVideoGame != null)
+            {
+                //Copy cp = new Copy(selectedCopyVideoGame, DaoPlayerSingleton.Instance.CurrentPlayer);
+                Copy cp = selectedCopy;
+                int nbWeeks = -1;
+                while(nbWeeks<0)
+                {
+                    string input = Microsoft.VisualBasic.Interaction.InputBox("veuillez indiquez le nombre de semaine désiré", "Selection de location", "1", -1, -1);
+                    if(!int.TryParse(input, out nbWeeks))
+                    {
+                        MessageBox.Show("Veuillez introduire que des nombres entre 1 et 10 !");
+                    }
+                    else if((nbWeeks < 0)||(nbWeeks>10))
+                    {
+                        MessageBox.Show("Veuillez introduire le nombre de semaine entre 1 et 10 !");
+                        nbWeeks = -1;
+                    }
+                    
+                    
+                }
+                if (nbWeeks == 0)
+                    return;
+                else if (!(selectedCopyVideoGame.CreditCost * nbWeeks <= DaoPlayerSingleton.Instance.CurrentPlayer.Credit))
+                {
+                    MessageBox.Show("pas assez de crédit ! il vous reste : " + DaoPlayerSingleton.Instance.CurrentPlayer.Credit.ToString() + " et il en faut : " + (selectedCopyVideoGame.CreditCost * nbWeeks).ToString());
+                    return;
+                }
+                cp.Pl_Borrower = DaoPlayerSingleton.Instance.CurrentPlayer;
+
+
+                if (DaoLoanSingleton.Instance.Insert(new Loan(cp, DateTime.Now.AddDays(1), DateTime.Now.AddDays((7 * nbWeeks) + 1))) && (DaoCopySingleton.Instance.Update(cp)))
+                {
+                    
+                    DaoPlayerSingleton.Instance.CurrentPlayer.Credit = (DaoPlayerSingleton.Instance.CurrentPlayer.Credit - (selectedCopyVideoGame.CreditCost * nbWeeks));
+                    if(DaoPlayerSingleton.Instance.update(DaoPlayerSingleton.Instance.CurrentPlayer))
+                        MessageBox.Show("copie reservé.");
+                    else
+                        MessageBox.Show("problème lors de l'insertion, veuillez réessayer .");
+                }
+                else
+                    MessageBox.Show("problème lors de l'insertion, veuillez réessayer .");
+            }
+            else
+                MessageBox.Show("Choisissez d'abord un jeu avant de vouloir le reserver ");
+
+            PopulateLoanList();
+            PopulateCopyList();
+            PopulateVideoGameList();
         }
 
         private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -392,7 +460,8 @@ namespace Projet_C
 
         private void FilterVideoGameAdmin(string filter)
         {
-            if (string.IsNullOrEmpty(filter)) return;
+            //if (string.IsNullOrEmpty(filter)) return;
+
             videoGames.Clear();
             lVG.Where(x => x.Name.ToLower().Contains(filter.ToLower())).ToList().ForEach(x =>
             {
