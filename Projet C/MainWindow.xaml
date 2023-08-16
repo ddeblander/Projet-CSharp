@@ -103,7 +103,7 @@
         
         <!-- Player -->
 
-        <Grid Grid.Column="1"  x:Name="listGames">
+        <Grid Grid.Column="1"  x:Name="listGames" >
             <!-- games list-->
 
             <Grid Width="755" Margin="6,26,6,76">
@@ -152,11 +152,11 @@
                     <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3"
                        x:Name="SelectedVideoGameavailableTB"/>
 
-                    <Button Grid.Column="1" Grid.Row="4" Margin="5" Click="ButtonBaseOnLoan_OnClick" x:Name="OnLoanBT">
+                    <Button Grid.Column="1" Grid.Row="4" Margin="5" Click="ButtonBaseOnLoan_OnClick" >
                         <Label Content="proposer à la reservation"/>
                     </Button>
 
-                    <Button Grid.Column="0" Grid.Row="4" Margin="5" Click="ButtonBaseLoan_OnClick">
+                    <Button Grid.Column="0" Grid.Row="4" Margin="5" Click="ButtonBaseLoan_OnClick" x:Name="OnLoanBT">
                         <Label Content="reserver"/>
                     </Button>
                 </Grid>
@@ -165,7 +165,9 @@
         </Grid>
         <!-- player menu-->
 
-        <Grid Grid.Column="1"  x:Name="LoanList" d:IsHidden="True"> 
+        <!-- player Location list-->
+
+        <Grid Grid.Column="1"  x:Name="LoanList" d:IsHidden="true" > 
             
             <Grid Width="755" Margin="6,26,6,76">
                 <Grid.RowDefinitions>
@@ -207,6 +209,11 @@
                     <TextBlock Grid.Column="0" Grid.Row="2" Text="Date de fin  " HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
                        x:Name="SelectedLoanDateEndTB"/>
+
+                    <Button Grid.Column="0" Grid.Row="6" Margin="5" Click="ButtonBaseBringBack_OnClick" x:Name="BringBackBtn">
+                        <Label Content="rendre le jeu"/>
+                    </Button>
+
                 </Grid>
             </Grid>
 

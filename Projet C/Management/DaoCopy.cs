@@ -160,7 +160,7 @@ namespace Projet_C.Management
                 if(ad.Pl_Borrower!=null)
                     cmd.Parameters.AddWithValue("IDPLLOAN", ad.Pl_Borrower.Id_User);
                 else
-                    cmd.Parameters.AddWithValue("IDPLLOAN",null);
+                    cmd.Parameters.AddWithValue("IDPLLOAN",DBNull.Value);
                 cmd.ExecuteNonQuery();
 
             }

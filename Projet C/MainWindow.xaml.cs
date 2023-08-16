@@ -33,6 +33,10 @@ namespace Projet_C
 
         private Copy selectedCopy;
 
+        private Loan selectedLoan;
+
+        private int amende=5;
+
         
 
         
@@ -52,7 +56,10 @@ namespace Projet_C
 
             listCopy= new List<Copy>();
 
+            
+
             Login_ui.Visibility = Visibility.Visible;
+            OnLoanBT.Visibility = Visibility.Collapsed;
         }
 
         private void PopulateVideoGameList()
@@ -71,7 +78,26 @@ namespace Projet_C
         }
         private void PopulateLoanList()
         {
-            //loanList = DaoLoanSingleton.Instance.Read();
+            PopulateCopyList();
+            loanList.Clear();
+            List<Copy> lCopy= new List<Copy>();
+
+            loanList =DaoLoanSingleton.Instance.ReadAll();
+
+            foreach (var item in loanList)
+            {
+                Copy cpTest = DaoCopySingleton.Instance.ReadByID(item.Copie.Id);
+                if((cpTest != null)&&(DaoPlayerSingleton.Instance.CurrentPlayer.Equals(cpTest.Pl_Borrower)))
+                {
+                    lCopy.Add(cpTest);
+                    Loan loan1=DaoLoanSingleton.Instance.ReadByCopy(cpTest);
+                    if (loan1 != null)
+                        loanList.Add(loan1);
+                }
+            }
+
+
+
             loans = new ObservableCollection<Loan>();
 
             LoanLV.ItemsSource = loans;
@@ -90,8 +116,13 @@ namespace Projet_C
 
             listCopy.OrderBy(x => x.Vg.Name);
             listCopy.ForEach(x=> copies.Add(x));
-             
+
             
+
+
+
+
+
         }
 
 
@@ -100,6 +131,7 @@ namespace Projet_C
         /// </summary>
         private void VideoGameLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            OnLoanBT.Visibility = Visibility.Collapsed;
             VideoGame vg = (VideoGame)((ListView)sender).SelectedItem;
             if (vg != null)
             {
@@ -115,10 +147,10 @@ namespace Projet_C
                     count = cpTest.Count();
                     if (count > 0)
                     {
-
+                        OnLoanBT.Visibility = Visibility.Visible;
                         selectedCopy = cpTest.First();
                     }
-                    
+
 
                 }
                 SelectedVideoGameavailableTB.Text = count.ToString();
@@ -153,10 +185,12 @@ namespace Projet_C
 
         private void LoanLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            loans.Clear();
             Loan loan = (Loan)((ListView)sender).SelectedItem;
+            
             if (loan != null)
             {
+                selectedLoan = loan;
+
                 SelectedLoanGameNameTB.Text = loan.Copie.Vg.Name;
                 SelectedLoanDateBeginTB.Text = loan.StartDate.ToString();
                 SelectedLoanDateEndTB.Text = loan.EndDate.ToString();
@@ -165,13 +199,14 @@ namespace Projet_C
 
         private void CopiesLV_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            loans.Clear();
-            PopulateLoanList();
+            
 
             Copy copy = (Copy)((ListView)sender).SelectedItem;
             if (copy != null)
             {
-                if(loanList.Where(x => x.Copie.Id == copy.Id).Count()>0)
+                loans.Clear();
+                PopulateLoanList();
+                if (loanList.Where(x => x.Copie.Id == copy.Id).Count()>0)
                 {
                     Loan loan = loanList.Where(x => x.Copie.Id == copy.Id).Last();
                 
@@ -197,7 +232,6 @@ namespace Projet_C
         {
             LoanList.Visibility = Visibility.Collapsed;
             listGames.Visibility = Visibility.Collapsed;
-            LoanLV.Visibility = Visibility.Collapsed;
             GameManager.Visibility = Visibility.Collapsed;
             Admin  ad = DaoAdminSingleton.Instance.ReadByUnique(login_user.Text,login_pwd.Password);
 
@@ -231,7 +265,6 @@ namespace Projet_C
                 Login_ui.Visibility = Visibility.Collapsed;
                 login_pwd.Password = string.Empty;
 
-                PopulateLoanList();
                 return;
             }
 
@@ -266,12 +299,14 @@ namespace Projet_C
                     break;
                 case 2://location list
                     HideAll();
+                    PopulateLoanList();
                     LoanList.Visibility = Visibility.Visible;   
                     break;
                 
                 case 3://player's copies list
                     HideAll();
                     PopulateCopyList();
+                    PopulateLoanList();
                     CopiesList.Visibility = Visibility.Visible;
                     break;
 
@@ -404,7 +439,6 @@ namespace Projet_C
         {
             if (selectedCopyVideoGame != null)
             {
-                //Copy cp = new Copy(selectedCopyVideoGame, DaoPlayerSingleton.Instance.CurrentPlayer);
                 Copy cp = selectedCopy;
                 int nbWeeks = -1;
                 while(nbWeeks<0)
@@ -436,7 +470,9 @@ namespace Projet_C
                 {
                     
                     DaoPlayerSingleton.Instance.CurrentPlayer.Credit = (DaoPlayerSingleton.Instance.CurrentPlayer.Credit - (selectedCopyVideoGame.CreditCost * nbWeeks));
-                    if(DaoPlayerSingleton.Instance.update(DaoPlayerSingleton.Instance.CurrentPlayer))
+                    Player owner = DaoPlayerSingleton.Instance.ReadByID(cp.Pl_owner.Id_User);
+                    owner.Credit += selectedCopyVideoGame.CreditCost * nbWeeks;
+                    if ((DaoPlayerSingleton.Instance.update(DaoPlayerSingleton.Instance.CurrentPlayer))&&(DaoPlayerSingleton.Instance.update(owner)))
                         MessageBox.Show("copie reservé.");
                     else
                         MessageBox.Show("problème lors de l'insertion, veuillez réessayer .");
@@ -446,10 +482,64 @@ namespace Projet_C
             }
             else
                 MessageBox.Show("Choisissez d'abord un jeu avant de vouloir le reserver ");
-
-            PopulateLoanList();
             PopulateCopyList();
             PopulateVideoGameList();
+        }
+
+        /// <summary>
+        /// button that release the loan and paid in credit the owner
+        /// </summary>
+        private void ButtonBaseBringBack_OnClick(object sender, RoutedEventArgs e)
+        {
+            DateTime dtnow = DateTime.Now;
+           
+            if(selectedLoan==null)
+            {
+                MessageBox.Show("Veuilez d'abord selectionner une location");
+                return;
+            }
+            else
+            {
+                Copy cp = DaoCopySingleton.Instance.ReadByID(selectedLoan.Copie.Id);
+                Player playerOwner = DaoPlayerSingleton.Instance.ReadByID(cp.Pl_owner.Id_User);
+
+                if (dtnow.Subtract(selectedLoan.EndDate).Days <= 0)
+                {
+                    cp.ReleaseCopy();
+                    if(DaoCopySingleton.Instance.Update(cp)&&(DaoLoanSingleton.Instance.Delete(selectedLoan))) 
+                    {
+
+                        MessageBox.Show("Jeu vidéo correctement rendu");
+                    }
+                    else
+                        MessageBox.Show("Erreur, veuillez réessayer");
+                }
+                else
+                {
+                    int Days = dtnow.Subtract(selectedLoan.EndDate).Days;
+                    int amendeTot = Days * amende;
+
+                    int weeksAmende = (Days / 7)+1;
+                    amendeTot +=(DaoVideoGameSingleton.Instance.ReadByID(cp.Vg.Id).CreditCost)* weeksAmende;
+                    DaoPlayerSingleton.Instance.CurrentPlayer.Credit -= amendeTot;
+                    DaoPlayerSingleton.Instance.update(DaoPlayerSingleton.Instance.CurrentPlayer);
+                    Player owner = DaoPlayerSingleton.Instance.ReadByID(cp.Pl_owner.Id_User);
+                    owner.Credit += amendeTot;
+                    DaoPlayerSingleton.Instance.update(owner);
+                    cp.ReleaseCopy();
+                    if (DaoCopySingleton.Instance.Update(cp) && (DaoLoanSingleton.Instance.Delete(selectedLoan)))
+                        MessageBox.Show("Jeu vidéo correctement rendu avec retard ! avec ces crédit en moins : " +amendeTot.ToString());
+                    else
+                        MessageBox.Show("Erreur, veuillez réessayer");
+
+
+                }
+                PopulateCopyList();
+                PopulateLoanList();
+                PopulateVideoGameList();
+            }
+            
+
         }
 
         private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -488,11 +578,12 @@ namespace Projet_C
         {
             LoanList.Visibility = Visibility.Collapsed;
             listGames.Visibility = Visibility.Collapsed;
-            LoanLV.Visibility = Visibility.Collapsed;
             GameManager.Visibility = Visibility.Collapsed;
             Login_ui.Visibility = Visibility.Collapsed;
             login_error_text.Visibility = Visibility.Collapsed;
             CopiesList.Visibility = Visibility.Collapsed;
         }
+
+        
     }
 }

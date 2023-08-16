@@ -49,7 +49,7 @@ namespace Projet_C.Management
         public Loan ReadByID(int ID)
         {
             connection.Open();
-            Admin ad = null;
+            Loan loan = null;
             try
             {
                 cmd.CommandType = CommandType.Text;
@@ -69,7 +69,31 @@ namespace Projet_C.Management
             cmd.Parameters.Clear();
             return loan;
         }
-        
+        public Loan ReadByCopy(Copy cp)
+        {
+            connection.Open();
+            List<Loan> list = new List<Loan>(); 
+            try
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "select * from dbo.loan where ID_Copies=@ID";
+                cmd.Parameters.AddWithValue("ID", cp.Id);
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    loan = new Loan(dc.ReadByID(reader.GetInt32(3)), reader.GetDateTime(1), reader.GetDateTime(2));
+                    loan.Id = reader.GetInt32(0);
+                    return loan;
+
+                }
+            }
+            catch (Exception ex) { Trace.Write(ex.Message); }
+            connection.Close();
+            cmd.Parameters.Clear();
+            return null;
+        }
+
         public Boolean Insert(Loan lo)
         {
             connection.Open();
