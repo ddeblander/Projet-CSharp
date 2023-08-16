@@ -80,6 +80,7 @@ namespace Projet_C
         {
             PopulateCopyList();
             loanList.Clear();
+            
             List<Copy> lCopy= new List<Copy>();
 
             loanList =DaoLoanSingleton.Instance.ReadAll();
@@ -212,7 +213,8 @@ namespace Projet_C
                 
                 SelectedCopyDateBeginTB.Text = loan.StartDate.ToString();
                 SelectedCopyDateEndTB.Text = loan.EndDate.ToString();
-                SelectedCopyPlayerBorrowedTB.Text = loan.Copie.Pl_Borrower.Pseudo ;
+                if(loan.Copie.Pl_Borrower!=null)
+                    SelectedCopyPlayerBorrowedTB.Text = loan.Copie.Pl_Borrower.Pseudo ;
                 }
                 else
                 {
