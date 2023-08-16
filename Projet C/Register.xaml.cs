@@ -33,16 +33,29 @@ namespace Projet_C
             String password = plPassword.Password;
             String pseudo = plPseudo.Text;
             DateTime date = DateTime.Now;
-            DateTime dateOfBirth = (DateTime)plDateOfBirth.SelectedDate;
+            DateTime dateOfBirth;
+            if (plDateOfBirth.SelectedDate!=null)
+                dateOfBirth = (DateTime)plDateOfBirth.SelectedDate;
+            else
+            {
+                MessageBox.Show("veuillez remplir le champs date ");
+                return;
+            }
             if (date.Subtract(dateOfBirth).TotalMinutes < 0)
                 MessageBox.Show("date de naissance incohérente !");
             else if (DaoPlayerSingleton.Instance.ReadUser(username)!=null ||(DaoAdminSingleton.Instance.ReadUser(username)!=null))
                 MessageBox.Show("utilisateur existe déjà, selectionnez un autre Username");
             else
             {
+                if ((username.Equals("")) && (password.Equals("")) && (pseudo.Equals("")))
+                {
+                    MessageBox.Show("veuillez remplir tout les champs ");
+                    return;
+                }
+                    
                 int credit = 10;
 
-                Player pl = new Player(pseudo, date, dateOfBirth, dateOfBirth) { Username = username, Password = password };
+                Player pl = new Player(pseudo, date, dateOfBirth, date) { Username = username, Password = password };
                 pl.Credit = credit;
                 DaoPlayerSingleton.Instance.Insert(pl);
 

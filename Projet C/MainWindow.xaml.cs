@@ -83,7 +83,7 @@ namespace Projet_C
             List<Copy> lCopy= new List<Copy>();
 
             loanList =DaoLoanSingleton.Instance.ReadAll();
-
+            List<Loan> lLoan2= new List<Loan>(); 
             foreach (var item in loanList)
             {
                 Copy cpTest = DaoCopySingleton.Instance.ReadByID(item.Copie.Id);
@@ -92,7 +92,7 @@ namespace Projet_C
                     lCopy.Add(cpTest);
                     Loan loan1=DaoLoanSingleton.Instance.ReadByCopy(cpTest);
                     if (loan1 != null)
-                        loanList.Add(loan1);
+                        lLoan2.Add(loan1);
                 }
             }
 
@@ -101,8 +101,8 @@ namespace Projet_C
             loans = new ObservableCollection<Loan>();
 
             LoanLV.ItemsSource = loans;
-            loanList.OrderBy(x => x.Copie.Vg.Name);
-            loanList.ForEach(x=> loans.Add(x));
+            lLoan2.OrderBy(x => x.Copie.Vg.Name);
+            lLoan2.ForEach(x=> loans.Add(x));
              
             
         }
@@ -261,6 +261,12 @@ namespace Projet_C
                 menu_selection_player.SelectedIndex = 0;
 
                 DaoPlayerSingleton.Instance.CurrentPlayer = pl;
+                if(DaoPlayerSingleton.Instance.CurrentPlayer.bonusAnniversary())
+                {
+                    DaoPlayerSingleton.Instance.update(DaoPlayerSingleton.Instance.CurrentPlayer);
+                    MessageBox.Show("c'était votre anniversaire, vous avez reçu 2 Crédits supplémentaire");
+                }
+                    
 
                 Login_ui.Visibility = Visibility.Collapsed;
                 login_pwd.Password = string.Empty;

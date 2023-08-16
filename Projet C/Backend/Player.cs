@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
+
 namespace Projet_C.Backend
 {
     public class Player : User
@@ -31,9 +33,15 @@ namespace Projet_C.Backend
 
         public bool bonusAnniversary()
         {
-            if (BonusAcquired.Year != DateTime.Now.Year)
+            if ((BonusAcquired.Year < DateTime.Now.Year)&&(BonusAcquired.Month> DateTime.Now.Month))
             {
                 BonusAcquired = DateTime.Now;
+                Credit += 2;
+            }
+            else if(((BonusAcquired.Year - DateTime.Now.Year)<1)&& (BonusAcquired.Month < DateTime.Now.Month))
+            {
+                BonusAcquired = DateTime.Now.AddYears(-1);
+                Credit += 2;
             }
             else
             { return false; }
@@ -41,5 +49,17 @@ namespace Projet_C.Backend
             return true;
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is Player player &&
+                   Username == player.Username &&
+                   Password == player.Password &&
+                   Id_User == player.Id_User &&
+                   Credit == player.Credit &&
+                   Pseudo == player.Pseudo &&
+                   RegistrationDate == player.RegistrationDate &&
+                   DateOfBirth == player.DateOfBirth &&
+                   BonusAcquired == player.BonusAcquired;
+        }
     }
 }
