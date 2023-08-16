@@ -40,6 +40,7 @@ namespace Projet_C.Management
             catch (Exception ex)
             {
                 Trace.Write(ex.Message);
+
             }
             connection.Close();
             cmd.Parameters.Clear();
@@ -72,7 +73,6 @@ namespace Projet_C.Management
         public Loan ReadByCopy(Copy cp)
         {
             connection.Open();
-            List<Loan> list = new List<Loan>(); 
             try
             {
                 cmd.CommandType = CommandType.Text;
@@ -84,6 +84,7 @@ namespace Projet_C.Management
                 {
                     loan = new Loan(dc.ReadByID(reader.GetInt32(3)), reader.GetDateTime(1), reader.GetDateTime(2));
                     loan.Id = reader.GetInt32(0);
+                    connection.Close();
                     return loan;
 
                 }
