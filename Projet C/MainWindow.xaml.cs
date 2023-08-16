@@ -320,6 +320,7 @@ namespace Projet_C
                 case 4://logout
                     if(MessageBox.Show("Voulez-vous vous déconnecter ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
+                        HideAll();
                         DaoPlayerSingleton.Instance.CurrentPlayer = null;
                         DaoAdminSingleton.Instance.CurrentAdmin = null;
                         Login_ui.Visibility = Visibility.Visible;
@@ -588,6 +589,7 @@ namespace Projet_C
             Login_ui.Visibility = Visibility.Collapsed;
             login_error_text.Visibility = Visibility.Collapsed;
             CopiesList.Visibility = Visibility.Collapsed;
+            listGames.Visibility= Visibility.Collapsed;
         }
 
         
